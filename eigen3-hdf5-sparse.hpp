@@ -3,7 +3,8 @@
 
 #include <vector>
 
-#include <eigen3-hdf5.hpp>
+#include "eigen3-hdf5.hpp"
+#include <H5Cpp.h>
 #include <Eigen/Sparse>
 
 namespace EigenHDF5
@@ -53,7 +54,7 @@ public:
 };
 
 template <typename SparseMatrixType>
-void save_sparse (H5::CommonFG &h5group, const std::string &name, const SparseMatrixType &mat, const H5::DSetCreatPropList &plist=H5::DSetCreatPropList::DEFAULT)
+void save_sparse (H5::H5File &h5group, const std::string &name, const SparseMatrixType &mat, const H5::DSetCreatPropList &plist=H5::DSetCreatPropList::DEFAULT)
 {
     typedef typename SparseMatrixType::Scalar Scalar;
     // save the actual sparse matrix
@@ -74,11 +75,13 @@ void save_sparse (H5::CommonFG &h5group, const std::string &name, const SparseMa
     Eigen::Matrix<typename SparseMatrixType::Index, 2, 1> shape;
     shape(0) = mat.rows();
     shape(1) = mat.cols();
-    save_attribute(dataset, "shape", shape);
+    //save_attribute(dataset, "shape", shape);
 }
 
+    // void load (const H5::H5File &h5group, const std::string &name, const Eigen::DenseBase<Derived> &mat)
+
 template <typename SparseMatrixType>
-void load_sparse (const H5::CommonFG &h5group, const std::string &name, SparseMatrixType &mat)
+void load_sparse (const H5::H5File &h5group, const std::string &name, SparseMatrixType &mat)
 {
     typedef typename SparseMatrixType::Scalar Scalar;
     const H5::DataSet dataset = h5group.openDataSet(name);
